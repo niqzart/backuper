@@ -1,3 +1,10 @@
-venv/
 .idea/
-config.txt
+.vscode/
+
+venv/
+env/
+
+.coverage/
+.mypy_cache/
+.pytest_cache/
+__pycache__/
