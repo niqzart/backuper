@@ -1,3 +1,5 @@
+dotenv: backup.env
+
 variables:
   base_backup_path: backup
   zip_password:

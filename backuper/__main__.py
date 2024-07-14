@@ -1,7 +1,9 @@
 from collections import OrderedDict
+from pathlib import Path
 from typing import Annotated
 
-from pydantic import Field, ValidationError
+from dotenv import load_dotenv
+from pydantic import AfterValidator, Field, ValidationError
 from pydantic_yaml import parse_yaml_file_as
 from typer import Argument, FileText, run
 
@@ -12,7 +14,13 @@ from backuper.variables import Variables
 AnyAction = Annotated[BackupAction, Field(discriminator="type")]
 
 
+def dotenv_loader(dotenv_filepath: Path) -> Path:
+    load_dotenv(dotenv_filepath)
+    return dotenv_filepath
+
+
 class ConfigModel(BaseModelForbidExtra):
+    dotenv: Annotated[Path, AfterValidator(dotenv_loader)]
     variables: Variables = {}
     actions: OrderedDict[str, AnyAction]
 
