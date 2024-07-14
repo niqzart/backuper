@@ -1,0 +1,13 @@
+actions:
+  name:
+    type: backup
+    source: "."
+    target: "./backup"
+    exclude:
+      directory_names:
+        - venv
+        - .mypy_cache
+        - backup
+      filename_patterns:
+        - "*.whl"
+    override_permissions: false
