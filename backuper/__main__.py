@@ -7,11 +7,13 @@ from typer import Argument, FileText, run
 
 from backuper.actions.backup import BackupAction
 from backuper.utils import BaseModelForbidExtra
+from backuper.variables import Variables
 
 AnyAction = Annotated[BackupAction, Field(discriminator="type")]
 
 
 class ConfigModel(BaseModelForbidExtra):
+    variables: Variables = {}
     actions: OrderedDict[str, AnyAction]
 
     def run(self) -> None:

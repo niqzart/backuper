@@ -1,13 +1,17 @@
+variables:
+  base_backup_path: backup
+
 actions:
   name:
     type: backup
     source: "."
-    target: "./backup"
+    target: "./${base_backup_path}"
     exclude:
       directory_names:
+        - .git
         - venv
         - .mypy_cache
-        - backup
+        - ${base_backup_path}
       filename_patterns:
         - "*.whl"
     override_permissions: false
