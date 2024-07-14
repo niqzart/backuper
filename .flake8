@@ -20,6 +20,8 @@ extend-ignore =
   D I FI TC Q U101 S101 WPS400
   # `type` will be used often
   VNE003
+  # launching scripts is the point, although not "secure"
+  SCS102 S605
 
   # # black
   WPS348 WPS352 C812 C815

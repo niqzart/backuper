@@ -1,3 +1,4 @@
+from os import system
 from pathlib import Path
 from typing import Literal
 
@@ -8,3 +9,6 @@ class BackupAction(Action):
     type: Literal["backup"]
     source: Path
     target: Path
+
+    def run(self) -> None:
+        system(f"robocopy {self.source} {self.target} /mir")

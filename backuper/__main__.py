@@ -15,6 +15,10 @@ class ConfigModel(BaseModel):
 
     actions: OrderedDict[str, AnyAction]
 
+    def run(self) -> None:
+        for action in self.actions.values():
+            action.run()
+
 
 def main(config_file: Annotated[FileText, Argument(encoding="utf-8")]) -> None:
     # TODO defaults for filename
@@ -23,7 +27,7 @@ def main(config_file: Annotated[FileText, Argument(encoding="utf-8")]) -> None:
     except ValidationError as e:  # noqa: WPS329
         raise e  # TODO error handling for parsing
 
-    print(config)  # noqa: T201 WPS421
+    config.run()
 
 
 if __name__ == "__main__":
