@@ -1,18 +1,17 @@
 from collections import OrderedDict
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import Field, ValidationError
 from pydantic_yaml import parse_yaml_file_as
 from typer import Argument, FileText, run
 
+from backuper.actions.abstract import BaseModelForbidExtra
 from backuper.actions.backup import BackupAction
 
 AnyAction = Annotated[BackupAction, Field(discriminator="type")]
 
 
-class ConfigModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
+class ConfigModel(BaseModelForbidExtra):
     actions: OrderedDict[str, AnyAction]
 
     def run(self) -> None:
