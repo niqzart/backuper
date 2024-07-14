@@ -5,8 +5,8 @@ from pydantic import Field, ValidationError
 from pydantic_yaml import parse_yaml_file_as
 from typer import Argument, FileText, run
 
-from backuper.actions.abstract import BaseModelForbidExtra
 from backuper.actions.backup import BackupAction
+from backuper.utils import BaseModelForbidExtra
 
 AnyAction = Annotated[BackupAction, Field(discriminator="type")]
 

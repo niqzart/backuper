@@ -3,7 +3,8 @@ from os import system
 from pathlib import Path
 from typing import Literal
 
-from backuper.actions.abstract import Action, BaseModelForbidExtra
+from backuper.actions.abstract import Action
+from backuper.utils import BaseModelForbidExtra
 
 
 class BackupExcludeSchema(BaseModelForbidExtra):
