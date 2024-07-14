@@ -1,5 +1,6 @@
 variables:
   base_backup_path: backup
+  zip_password:
 
 actions:
   name:
