@@ -1,0 +1,5 @@
+actions:
+  name:
+    type: backup
+    source: "./source"
+    target: "./target"

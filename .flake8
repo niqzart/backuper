@@ -18,6 +18,8 @@ max-line-length = 88
 extend-ignore =
   # # not required or shadowed by other plugins
   D I FI TC Q U101 S101 WPS400
+  # `type` will be used often
+  VNE003
 
   # # black
   WPS348 WPS352 C812 C815
