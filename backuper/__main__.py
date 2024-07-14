@@ -1,21 +1,11 @@
 from collections import OrderedDict
-from pathlib import Path
-from typing import Annotated, Literal
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from pydantic_yaml import parse_yaml_file_as
 from typer import Argument, FileText, run
 
-
-class Action(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-
-class BackupAction(Action):
-    type: Literal["backup"]
-    source: Path
-    target: Path
-
+from backuper.actions.backup import BackupAction
 
 AnyAction = Annotated[BackupAction, Field(discriminator="type")]
 
