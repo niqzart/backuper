@@ -13,3 +13,4 @@ __pycache__/
 
 backup/
 backup.env
+backup.7z.*
