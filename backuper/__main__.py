@@ -5,7 +5,7 @@ from typing import Annotated
 from dotenv import load_dotenv
 from pydantic import AfterValidator, Field, ValidationError
 from pydantic_yaml import parse_yaml_file_as
-from typer import Argument, FileText, run
+from typer import Argument, FileText, Typer
 
 from backuper.actions.backup import BackupAction
 from backuper.utils import BaseModelForbidExtra
@@ -29,6 +29,10 @@ class ConfigModel(BaseModelForbidExtra):
             action.run()
 
 
+cli = Typer()
+
+
+@cli.command()
 def main(config_file: Annotated[FileText, Argument(encoding="utf-8")]) -> None:
     # TODO defaults for filename
     try:
@@ -40,4 +44,4 @@ def main(config_file: Annotated[FileText, Argument(encoding="utf-8")]) -> None:
 
 
 if __name__ == "__main__":
-    run(main)
+    cli()

@@ -17,4 +17,5 @@ actions:
         - ${base_backup_path}
       filename_patterns:
         - "*.whl"
+        - "*.tar.gz"
     override_permissions: false

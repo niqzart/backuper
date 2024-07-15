@@ -13,6 +13,6 @@ pre-commit install
 
 ### Run
 ```
-python backuper config.yml
-echo "<config>" | python backuper -
+backuper config.yml
+echo "<config>" | backuper -
 ```
