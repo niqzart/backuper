@@ -35,3 +35,6 @@ class BackupAction(SubShellAction):
         if self.exclude.filename_patterns:
             yield "/xf"
             yield from self.exclude.filename_patterns
+
+    def is_failed(self, return_code: int) -> bool:
+        return return_code > 7
