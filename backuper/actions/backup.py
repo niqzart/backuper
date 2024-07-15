@@ -1,8 +1,7 @@
 from collections.abc import Iterator
-from os import system
 from typing import Literal
 
-from backuper.actions.abstract import Action
+from backuper.actions.abstract import SubShellAction
 from backuper.utils import BaseModelForbidExtra
 from backuper.variables import SubstitutedStr
 
@@ -12,7 +11,7 @@ class BackupExcludeSchema(BaseModelForbidExtra):
     filename_patterns: list[SubstitutedStr] = []
 
 
-class BackupAction(Action):
+class BackupAction(SubShellAction):
     type: Literal["backup"]
     source: SubstitutedStr
     target: SubstitutedStr
@@ -36,6 +35,3 @@ class BackupAction(Action):
         if self.exclude.filename_patterns:
             yield "/xf"
             yield from self.exclude.filename_patterns
-
-    def run(self) -> None:
-        system(" ".join(self.collect_command()))

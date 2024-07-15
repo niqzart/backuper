@@ -8,10 +8,11 @@ from pydantic_yaml import parse_yaml_file_as
 from typer import Argument, FileText, Typer
 
 from backuper.actions.backup import BackupAction
+from backuper.actions.compress import CompressAction
 from backuper.utils import BaseModelForbidExtra
 from backuper.variables import Variables
 
-AnyAction = Annotated[BackupAction, Field(discriminator="type")]
+AnyAction = Annotated[BackupAction | CompressAction, Field(discriminator="type")]
 
 
 def dotenv_loader(dotenv_filepath: Path) -> Path:
