@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "backuper"
+name = "backuper-nq"  # just for PyPI
 version = "0.1.0"
 description = "Backup tool with CI-like configuration"
 authors = ["niqzart <niqzart@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "backuper" }]
 
 [tool.poetry.scripts]
 backuper = "backuper.__main__:cli"
