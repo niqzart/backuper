@@ -1,5 +1,5 @@
+import subprocess
 from collections.abc import Iterator
-from os import system
 
 from backuper.utils import BaseModelForbidExtra
 
@@ -14,4 +14,4 @@ class SubShellAction(Action):
         raise NotImplementedError
 
     def run(self) -> None:
-        system(" ".join(self.collect_command()))
+        subprocess.run(list(self.collect_command()))  # noqa: S603
