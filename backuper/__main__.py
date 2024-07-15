@@ -7,6 +7,7 @@ from pydantic import AfterValidator, Field, ValidationError
 from pydantic_yaml import parse_yaml_file_as
 from typer import Argument, FileText, Typer
 
+from backuper.actions.abstract import ActionError
 from backuper.actions.backup import BackupAction
 from backuper.actions.compress import CompressAction
 from backuper.utils import BaseModelForbidExtra
@@ -26,8 +27,13 @@ class ConfigModel(BaseModelForbidExtra):
     actions: OrderedDict[str, AnyAction]
 
     def run(self) -> None:
-        for action in self.actions.values():
-            action.run()
+        for action_name, action in self.actions.items():
+            try:
+                action.run()
+            except ActionError as e:
+                raise RuntimeError(
+                    f"Action '{action_name}' failed with code {e.return_code}"
+                )
 
 
 cli = Typer()

@@ -30,3 +30,6 @@ class CompressAction(SubShellAction):
             yield f"-p{self.password}"
 
         yield self.source
+
+    def is_failed(self, return_code: int) -> bool:
+        return return_code != 0
