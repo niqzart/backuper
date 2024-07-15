@@ -1,20 +1,21 @@
 from collections.abc import Iterator
 from os import system
-from pathlib import Path
 from typing import Literal
 
-from backuper.actions.abstract import Action, BaseModelForbidExtra
+from backuper.actions.abstract import Action
+from backuper.utils import BaseModelForbidExtra
+from backuper.variables import SubstitutedStr
 
 
 class BackupExcludeSchema(BaseModelForbidExtra):
-    directory_names: list[str] = []
-    filename_patterns: list[str] = []
+    directory_names: list[SubstitutedStr] = []
+    filename_patterns: list[SubstitutedStr] = []
 
 
 class BackupAction(Action):
     type: Literal["backup"]
-    source: Path
-    target: Path
+    source: SubstitutedStr
+    target: SubstitutedStr
     override_permissions: bool = False
     exclude: BackupExcludeSchema = BackupExcludeSchema()
 

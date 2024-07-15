@@ -1,8 +1,4 @@
-from pydantic import BaseModel, ConfigDict
-
-
-class BaseModelForbidExtra(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+from backuper.utils import BaseModelForbidExtra
 
 
 class Action(BaseModelForbidExtra):
