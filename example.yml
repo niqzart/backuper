@@ -1,21 +1,21 @@
 dotenv: backup.env
 
-variables:
+variables:  # None -> required, "<value>" -> not required, defaults to <value>
   base_backup_path: backup
   zip_password:
 
 actions:
   name:
-    type: backup
+    type: backup  # uses `robocopy /mir`
     source: "."
     target: "./${base_backup_path}"
     exclude:
-      directory_names:
+      directory_names:  # see robocopy's `/xd` argument
         - .git
         - venv
         - .mypy_cache
         - ${base_backup_path}
-      filename_patterns:
+      filename_patterns:  # see robocopy's `/xf` argument
         - "*.whl"
         - "*.tar.gz"
-    override_permissions: false
+    override_permissions: false  # see robocopy's `/b` argument
