@@ -28,6 +28,8 @@ class CompressAction(SubShellAction):
 
         if self.password:
             yield f"-p{self.password}"
+            if self.archive_type == "7z":
+                yield "-mhe"
 
         yield self.source
 
