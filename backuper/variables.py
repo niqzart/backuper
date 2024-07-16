@@ -2,32 +2,36 @@ from os import getenv
 from string import Template
 from typing import Annotated
 
+from dotenv import load_dotenv
 from pydantic import AfterValidator
+from pydantic_core.core_schema import ValidationInfo
+
+from backuper.config import ConfigModel
 
 
-class VariableController:
-    def __init__(self) -> None:
-        self.variables: dict[str, str] = {}
+def substitute(incoming_string: str, info: ValidationInfo) -> str:
+    if not isinstance(info.context, dict):
+        raise RuntimeError
 
-    def load_variable(self, key: str, value: str | None) -> str:
-        value = getenv(key, default=value)
-        if value is None:
-            raise EnvironmentError(f"Environment variable '{key}' should be specified")
-        return value
-
-    def load_variables(self, variables: dict[str, str | None]) -> dict[str, str]:
-        self.variables = {
-            key: self.load_variable(key=key, value=value)
-            for key, value in variables.items()
-        }
-        return self.variables
-
-    def substitute(self, incoming_string: str) -> str:
-        template = Template(incoming_string)
-        return template.substitute(self.variables)
+    template = Template(incoming_string)
+    return template.substitute(info.context)
 
 
-vc = VariableController()
+SubstitutedStr = Annotated[str, AfterValidator(substitute)]
 
-Variables = Annotated[dict[str, str | None], AfterValidator(vc.load_variables)]
-SubstitutedStr = Annotated[str, AfterValidator(vc.substitute)]
+
+def load_variable(name: str, default_value: str | None) -> str:
+    value = getenv(name, default=default_value)
+    if value is None:
+        raise EnvironmentError(f"Environment variable '{name}' should be specified")
+    return value
+
+
+def load_variables(config: ConfigModel) -> dict[str, str]:
+    if config.dotenv is not None:
+        load_dotenv(config.dotenv)
+
+    return {
+        name: load_variable(name=name, default_value=default_value)
+        for name, default_value in config.variables.items()
+    }
