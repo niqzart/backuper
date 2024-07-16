@@ -1,45 +1,12 @@
-from collections import OrderedDict
-from os import getenv
-from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
-from dotenv import load_dotenv
-from pydantic import Field, RootModel, ValidationError
+from pydantic import ValidationError
 from typer import Argument, FileText, Typer
 from yaml import safe_load as safe_load_yaml
 
-from backuper.actions.abstract import ActionError
-from backuper.actions.backup import BackupAction
-from backuper.actions.compress import CompressAction
-from backuper.utils import BaseModelForbidExtra
-
-
-class ConfigModel(BaseModelForbidExtra):
-    dotenv: Path | None = None
-    variables: dict[str, str | None] = {}
-    actions: Any
-
-
-def load_variable(name: str, default_value: str | None) -> str:
-    value = getenv(name, default=default_value)
-    if value is None:
-        raise EnvironmentError(f"Environment variable '{name}' should be specified")
-    return value
-
-
-def load_variables(config: ConfigModel) -> dict[str, str]:
-    if config.dotenv is not None:
-        load_dotenv(config.dotenv)
-
-    return {
-        name: load_variable(name=name, default_value=default_value)
-        for name, default_value in config.variables.items()
-    }
-
-
-AnyAction = Annotated[BackupAction | CompressAction, Field(discriminator="type")]
-ActionsModel = RootModel[OrderedDict[str, AnyAction]]
-
+from backuper.config import ConfigModel
+from backuper.runner import ActionsModel, run_actions
+from backuper.variables import load_variables
 
 cli = Typer()
 
@@ -62,13 +29,7 @@ def main(config_file: Annotated[FileText, Argument(encoding="utf-8")]) -> None:
     except ValidationError as e:  # noqa: WPS329 WPS440
         raise e  # TODO error handling for parsing
 
-    for action_name, action in actions.root.items():
-        try:
-            action.run()
-        except ActionError as e:  # noqa: WPS440
-            raise RuntimeError(
-                f"Action '{action_name}' failed with code {e.return_code}"
-            )
+    run_actions(actions=actions)
 
 
 if __name__ == "__main__":
