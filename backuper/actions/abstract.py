@@ -1,7 +1,6 @@
-import subprocess
 from collections.abc import Iterator
 
-from backuper.utils import BaseModelForbidExtra
+from backuper.utils import BaseModelForbidExtra, run_sub_shell
 
 
 class ActionError(RuntimeError):
@@ -22,6 +21,6 @@ class SubShellAction(Action):
         raise NotImplementedError
 
     def run(self) -> None:
-        result = subprocess.run(list(self.collect_command()))  # noqa: S603
+        result = run_sub_shell(list(self.collect_command()))
         if self.is_failed(result.returncode):
             raise ActionError(result.returncode)
