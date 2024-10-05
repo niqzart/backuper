@@ -4,12 +4,13 @@ from typing import Annotated
 from pydantic import Field, RootModel
 
 from backuper.actions.abstract import ActionError
-from backuper.actions.android import FromAndroidAction
+from backuper.actions.android import FromAndroidAction, ToAndroidAction
 from backuper.actions.backup import BackupAction
 from backuper.actions.compress import CompressAction
 
 AnyAction = Annotated[
-    BackupAction | CompressAction | FromAndroidAction, Field(discriminator="type")
+    BackupAction | CompressAction | FromAndroidAction | ToAndroidAction,
+    Field(discriminator="type"),
 ]
 ActionsModel = RootModel[OrderedDict[str, AnyAction]]
 

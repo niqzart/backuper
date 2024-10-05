@@ -3,7 +3,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Literal
 
-from backuper.actions.abstract import Action, ActionError
+from backuper.actions.abstract import Action, ActionError, SubShellAction
 from backuper.utils import run_sub_shell
 from backuper.variables import SubstitutedStr
 
@@ -61,3 +61,24 @@ class FromAndroidAction(Action):
             pull_result = run_sub_shell(list(self.collect_pull_command(filename)))
             if pull_result.returncode != 0:
                 raise ActionError(pull_result.returncode, step_name="copying")
+
+
+class ToAndroidAction(SubShellAction):
+    type: Literal["to-android"]
+    source: SubstitutedStr
+    target: SubstitutedStr
+    keep_timestamps_and_mode: bool = True
+
+    def collect_command(self) -> Iterator[str]:
+        yield "adb"
+        yield "push"
+        yield "-p"
+
+        if self.keep_timestamps_and_mode:
+            yield "-a"
+
+        yield str(self.source)
+        yield str(self.target)
+
+    def is_failed(self, return_code: int) -> bool:
+        return return_code != 0
