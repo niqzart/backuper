@@ -20,9 +20,13 @@ extend-ignore =
   D I FI TC Q U101 S101 WPS400
   # `type` will be used often
   VNE003
+  # console app uses `print`
+  T201 WPS421
+  # shell calls use `subprocess` and are not supposed to be secure
+  S602 SCS103
 
   # # black
-  WPS348 WPS352 C812 C815
+  WPS348 WPS352 C812 C815 E501
   # # weird
   PIE803 C101 FNE004 FNE008 N812 ANN101 ANN102 WPS110 WPS111 VNE001 CM001 S404
   # # broken
