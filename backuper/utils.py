@@ -8,5 +8,7 @@ class BaseModelForbidExtra(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-def run_sub_shell(command: list[str]) -> subprocess.CompletedProcess[Any]:
-    return subprocess.run(command, shell=True)  # noqa: S602 SCS103
+def run_sub_shell(
+    command: list[str], capture_output: bool = False
+) -> subprocess.CompletedProcess[Any]:
+    return subprocess.run(command, capture_output=capture_output, shell=True)
