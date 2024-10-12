@@ -7,9 +7,10 @@ from backuper.actions.abstract import ActionError
 from backuper.actions.android import FromAndroidAction, ToAndroidAction
 from backuper.actions.backup import BackupAction
 from backuper.actions.compress import CompressAction
+from backuper.actions.split import SplitAction
 
 AnyAction = Annotated[
-    BackupAction | CompressAction | FromAndroidAction | ToAndroidAction,
+    BackupAction | CompressAction | SplitAction | FromAndroidAction | ToAndroidAction,
     Field(discriminator="type"),
 ]
 ActionsModel = RootModel[OrderedDict[str, AnyAction]]

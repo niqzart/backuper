@@ -1,3 +1,2 @@
-cd D:\Projects\backuper
-.\venv\Scripts\activate
-python main.py
+D:\Projects\backuper\venv\Scripts\activate
+backuper config.yml
