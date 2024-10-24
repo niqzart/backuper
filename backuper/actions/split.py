@@ -14,6 +14,8 @@ class SplitAction(SubShellAction):
     source: SubstitutedStr
     target: SubstitutedStr
     archive_name: SubstitutedStr
+    compression_level: Literal[0, 1, 3, 5, 7, 9] = 0
+    fast_bytes: Annotated[int, Field(ge=5, le=273)] = 32
     volume_size: Annotated[SubstitutedStr, Field(pattern=r"\d+[bkmg]")]
 
     def collect_command(self) -> Iterator[str]:
@@ -21,6 +23,8 @@ class SplitAction(SubShellAction):
         yield "a"
         yield str(Path(self.target) / f"{self.archive_name}.7z")
 
+        yield f"-mx={self.compression_level}"
+        yield f"-mfb={self.fast_bytes}"
         if self.volume_size:
             yield f"-v{self.volume_size}"
 
