@@ -9,6 +9,13 @@ class BaseModelForbidExtra(BaseModel):
 
 
 def run_sub_shell(
-    command: list[str], capture_output: bool = False
+    command: list[str],
+    capture_output: bool = False,
+    encoding: str | None = "utf-8",
 ) -> subprocess.CompletedProcess[Any]:
-    return subprocess.run(command, capture_output=capture_output, shell=True)
+    return subprocess.run(
+        command,
+        capture_output=capture_output,
+        shell=True,
+        encoding=encoding,
+    )
