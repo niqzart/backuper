@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "backuper-nq"  # just for PyPI
-version = "0.5.1"
+version = "0.6.0"
 description = "Backup tool with CI-like configuration"
 authors = ["niqzart <niqzart@gmail.com>"]
 readme = "README.md"

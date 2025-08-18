@@ -5,10 +5,10 @@ variables:  # None -> required, "<value>" -> not required, defaults to <value>
   zip_password:
 
 actions:
-  first:
+  backup-from-pc:
     type: backup  # uses `robocopy /mir`
     source: "."
-    target: "./${base_backup_folder}"
+    target: "./${base_backup_folder}/pc"
     exclude:
       directory_names:  # see robocopy's `/xd` argument
         - .git
@@ -21,7 +21,13 @@ actions:
         - "*.7z.*"
     override_permissions: false  # see robocopy's `/b` argument
 
-  second:
+  backup-from-android:  # uses `adb shell ls` & `adb pull` for robocopy-like backup
+    type: from-android
+    source: "/sdcard/Pictures"
+    target: "${base_backup_folder}/android/pictures"
+    filename_regex: "^(?!.trashed).*"  # excludes files in the recycle bin
+
+  create-full-archive:
     type: compress
     source: "./${base_backup_folder}"
     archive_name: ${base_backup_folder}
