@@ -28,7 +28,7 @@ extend-ignore =
   # # black
   WPS348 WPS352 C812 C815 E501
   # # weird
-  PIE803 C101 FNE004 FNE008 N812 ANN101 ANN102 WPS110 WPS111 VNE001 CM001 S404
+  PIE803 C101 FNE004 FNE008 N812 ANN101 ANN102 WPS110 WPS111 WPS526 VNE001 CM001 S404
   # # broken
   PIE798 WPS226 WPS354 WPS432 WPS473 WPS507
   # fails to understand `raise NotImplementedError` and overloading
@@ -42,7 +42,7 @@ extend-ignore =
   # fails to same-name class and instance attributes (pydantic & sqlalchemy)
   WPS601
   # too many
-  WPS201 WPS204 WPS210 WPS213 WPS214 WPS217 WPS218 WPS221 WPS232
+  WPS201 WPS204 WPS210 WPS213 WPS214 WPS217 WPS218 WPS221 WPS231 WPS232
 
   # # don't block features
   # utils is a module name
