@@ -3,7 +3,7 @@ from enum import StrEnum
 from typing import Literal, assert_never
 
 from backuper.actions.abstract import SubShellAction
-from backuper.variables import SubstitutedStr
+from backuper.parameters import SubstitutedStr
 
 
 class CompressMode(StrEnum):

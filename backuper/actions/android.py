@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Literal
 
 from backuper.actions.abstract import Action, ActionError, SubShellAction
+from backuper.parameters import SubstitutedStr
 from backuper.utils import run_sub_shell
-from backuper.variables import SubstitutedStr
 
 
 @dataclass()

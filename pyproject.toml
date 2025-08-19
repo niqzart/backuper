@@ -11,7 +11,7 @@ backuper = "backuper.__main__:cli"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-typer = "^0.12.3"
+typer = "^0.12.5"
 pydantic = "^2.8.2"
 python-dotenv = "^1.0.1"
 

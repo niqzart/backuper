@@ -6,7 +6,7 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from backuper.actions.abstract import SubShellAction
-from backuper.variables import SubstitutedStr
+from backuper.parameters import SubstitutedStr
 
 
 class SplitAction(SubShellAction):

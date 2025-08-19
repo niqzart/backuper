@@ -2,8 +2,8 @@ from collections.abc import Iterator
 from typing import Literal
 
 from backuper.actions.abstract import SubShellAction
+from backuper.parameters import SubstitutedStr
 from backuper.utils import BaseModelForbidExtra
-from backuper.variables import SubstitutedStr
 
 
 class BackupExcludeSchema(BaseModelForbidExtra):

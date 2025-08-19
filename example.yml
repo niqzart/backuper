@@ -1,14 +1,20 @@
 dotenv: backup.env
 
-variables:  # None -> required, "<value>" -> not required, defaults to <value>
-  base_backup_folder: backup
-  zip_password:
+parameters:
+  base_backup_folder:  # constant, always `backup`
+    source: constant
+    value: backup
+  zip_password:  # required to be specified in environment
+    source: environment
+  archive_name:  # required to be specified as the first cli-argument
+    source: cli-argument
+    index: 0
 
 actions:
   backup-from-pc:
     type: backup  # uses `robocopy /mir`
     source: "."
-    target: "./${base_backup_folder}/pc"
+    target: "./${base_backup_folder}/pc"  # parameter substitution will turn this into `./backup/pc`
     exclude:
       directory_names:  # see robocopy's `/xd` argument
         - .git
@@ -30,6 +36,6 @@ actions:
   create-full-archive:
     type: compress
     source: "./${base_backup_folder}"
-    archive_name: ${base_backup_folder}
+    archive_name: "${archive_name}"
     volume_size: 30k
     password: ${zip_password}
