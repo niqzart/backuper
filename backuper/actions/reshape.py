@@ -1,4 +1,5 @@
 import re
+import shutil
 from pathlib import Path
 from typing import Annotated, Final, Literal
 
@@ -18,6 +19,7 @@ class ImageReshapeAction(Action):
     filename_regex: re.Pattern[str] | None = None
     replace_extension: bool = False
     delete_original: bool = False
+    copy_metadata: bool = True
     lossless: bool = True
     quality: Annotated[int, Field(ge=1, le=100)] = 80
 
@@ -37,9 +39,9 @@ class ImageReshapeAction(Action):
             source_filename = source_filename.rpartition(".")[0]
         return f"{source_filename}.{RESHAPED_IMAGE_FORMAT}"
 
-    def reshape_image(self, path: Path) -> None:
+    def reshape_image(self, source_path: Path) -> None:
         try:
-            image = Image.open(path)
+            image = Image.open(source_path)
         except UnidentifiedImageError:
             return  # not an image
 
@@ -47,18 +49,22 @@ class ImageReshapeAction(Action):
             if self.is_already_reshaped(image=image):
                 return
 
-            target_filename = self.generate_target_filename(path.name)
+            target_filename = self.generate_target_filename(source_path.name)
+            target_path = source_path.parent / target_filename
             image.save(
-                path.parent / target_filename,
+                target_path,
                 format=RESHAPED_IMAGE_FORMAT,
                 lossless=self.lossless,
                 quality=self.quality,
             )
 
-        print(f"{path}: reshaped to {target_filename}")
+        if self.copy_metadata:
+            shutil.copystat(source_path, target_path)
 
         if self.delete_original:
-            path.unlink()
+            source_path.unlink()
+
+        print(f"{source_path}: reshaped to {target_filename}")
 
     def reshape_images(self, source_path: Path) -> None:
         for path in sorted(source_path.iterdir(), key=lambda p: p.name):
