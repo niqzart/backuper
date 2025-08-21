@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import Annotated, Final, Literal
 
@@ -13,8 +14,16 @@ RESHAPED_IMAGE_FORMAT: Final[str] = "webp"
 class ImageReshapeAction(Action):
     type: Literal["reshape-images"]
     source: SubstitutedStr
+    recursive: bool = False
+    filename_regex: re.Pattern[str] | None = None
     lossless: bool = True
     quality: Annotated[int, Field(ge=1, le=100)] = 80
+
+    def is_filename_skipped(self, filename: str) -> bool:
+        return (
+            self.filename_regex is not None
+            and self.filename_regex.fullmatch(filename) is None
+        )
 
     def is_already_reshaped(self, image: Image.Image) -> bool:
         if image.format is None:
@@ -43,6 +52,12 @@ class ImageReshapeAction(Action):
 
     def reshape_images(self, source_path: Path) -> None:
         for path in source_path.iterdir():
+            if self.is_filename_skipped(path.name):
+                continue
+
+            if self.recursive and path.is_dir():
+                self.reshape_images(path)
+
             if not path.is_file():
                 continue
 
