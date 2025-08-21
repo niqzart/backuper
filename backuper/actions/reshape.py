@@ -16,6 +16,8 @@ class ImageReshapeAction(Action):
     source: SubstitutedStr
     recursive: bool = False
     filename_regex: re.Pattern[str] | None = None
+    replace_extension: bool = False
+    delete_original: bool = False
     lossless: bool = True
     quality: Annotated[int, Field(ge=1, le=100)] = 80
 
@@ -31,6 +33,8 @@ class ImageReshapeAction(Action):
         return image.format.lower() == RESHAPED_IMAGE_FORMAT
 
     def generate_target_filename(self, source_filename: str) -> str:
+        if self.replace_extension and "." in source_filename:
+            source_filename = source_filename.rpartition(".")[0]
         return f"{source_filename}.{RESHAPED_IMAGE_FORMAT}"
 
     def reshape_image(self, path: Path) -> None:
@@ -49,6 +53,9 @@ class ImageReshapeAction(Action):
                 lossless=self.lossless,
                 quality=self.quality,
             )
+
+        if self.delete_original:
+            path.unlink()
 
     def reshape_images(self, source_path: Path) -> None:
         for path in source_path.iterdir():
