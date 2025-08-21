@@ -1,4 +1,5 @@
-from os import getenv
+from os import getenv, path
+from pathlib import Path
 from string import Template
 from typing import Annotated
 
@@ -24,6 +25,13 @@ def substitute(incoming_string: str, info: ValidationInfo) -> str:
 
 
 SubstitutedStr = Annotated[str, AfterValidator(substitute)]
+
+
+def substitute_path(incoming_path: Path, info: ValidationInfo) -> Path:
+    return Path(path.expandvars(substitute(str(incoming_path), info)))
+
+
+SubstitutedPath = Annotated[Path, AfterValidator(substitute_path)]
 
 
 class ParameterLoader:

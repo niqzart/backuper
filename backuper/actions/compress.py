@@ -3,7 +3,7 @@ from enum import StrEnum
 from typing import Literal, assert_never
 
 from backuper.actions.abstract import SubShellAction
-from backuper.parameters import SubstitutedStr
+from backuper.parameters import SubstitutedPath, SubstitutedStr
 
 
 class CompressMode(StrEnum):
@@ -14,7 +14,7 @@ class CompressMode(StrEnum):
 
 class CompressAction(SubShellAction):
     type: Literal["compress"]
-    source: SubstitutedStr
+    source: SubstitutedPath
     archive_name: SubstitutedStr
     archive_type: Literal["7z", "zip", "gzip", "bzip2", "tar"] = "7z"
     mode: CompressMode = CompressMode.SYNC
@@ -44,7 +44,7 @@ class CompressAction(SubShellAction):
             if self.archive_type == "7z":
                 yield "-mhe"
 
-        yield self.source
+        yield str(self.source)
 
     def is_failed(self, return_code: int) -> bool:
         return return_code != 0

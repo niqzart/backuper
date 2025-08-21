@@ -7,14 +7,14 @@ from PIL import Image, UnidentifiedImageError
 from pydantic import Field
 
 from backuper.actions.abstract import Action
-from backuper.parameters import SubstitutedStr
+from backuper.parameters import SubstitutedPath
 
 RESHAPED_IMAGE_FORMAT: Final[str] = "webp"
 
 
 class ImageReshapeAction(Action):
     type: Literal["reshape-images"]
-    source: SubstitutedStr
+    source: SubstitutedPath
     recursive: bool = False
     filename_regex: re.Pattern[str] | None = None
     replace_extension: bool = False
@@ -81,10 +81,9 @@ class ImageReshapeAction(Action):
             self.reshape_image(path)
 
     def run(self) -> None:
-        source_path = Path(self.source)
-        if source_path.is_file():
-            self.reshape_image(source_path)
-        elif source_path.is_dir():
-            self.reshape_images(source_path)
+        if self.source.is_file():
+            self.reshape_image(self.source)
+        elif self.source.is_dir():
+            self.reshape_images(self.source)
         else:
             raise TypeError("Source is neither a file nor a directory")

@@ -2,7 +2,7 @@ from collections.abc import Iterator
 from typing import Literal
 
 from backuper.actions.abstract import SubShellAction
-from backuper.parameters import SubstitutedStr
+from backuper.parameters import SubstitutedPath, SubstitutedStr
 from backuper.utils import BaseModelForbidExtra
 
 
@@ -13,8 +13,8 @@ class BackupExcludeSchema(BaseModelForbidExtra):
 
 class BackupAction(SubShellAction):
     type: Literal["backup"]
-    source: SubstitutedStr
-    target: SubstitutedStr
+    source: SubstitutedPath
+    target: SubstitutedPath
     override_permissions: bool = False
     exclude: BackupExcludeSchema = BackupExcludeSchema()
 

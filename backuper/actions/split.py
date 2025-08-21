@@ -6,13 +6,13 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from backuper.actions.abstract import SubShellAction
-from backuper.parameters import SubstitutedStr
+from backuper.parameters import SubstitutedPath, SubstitutedStr
 
 
 class SplitAction(SubShellAction):
     type: Literal["split"]
-    source: SubstitutedStr
-    target: SubstitutedStr
+    source: SubstitutedPath
+    target: SubstitutedPath
     archive_name: SubstitutedStr
     compression_level: Literal[0, 1, 3, 5, 7, 9] = 0
     fast_bytes: Annotated[int, Field(ge=5, le=273)] = 32
@@ -28,7 +28,7 @@ class SplitAction(SubShellAction):
         if self.volume_size:
             yield f"-v{self.volume_size}"
 
-        yield self.source
+        yield str(self.source)
 
     def run(self) -> None:
         if Path(self.target).is_dir():
