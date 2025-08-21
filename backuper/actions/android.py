@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Literal
 
 from backuper.actions.abstract import Action, ActionError, SubShellAction
+from backuper.parameters import SubstitutedPath
 from backuper.utils import run_sub_shell
-from backuper.variables import SubstitutedStr
 
 
 @dataclass()
@@ -22,8 +22,8 @@ class FromAndroidMode(StrEnum):
 
 class FromAndroidAction(Action):
     type: Literal["from-android"]
-    source: SubstitutedStr
-    target: SubstitutedStr
+    source: SubstitutedPath
+    target: SubstitutedPath
     mode: FromAndroidMode = FromAndroidMode.SYNC
     filename_regex: re.Pattern[str] | None = None
     keep_timestamps_and_mode: bool = True
@@ -146,8 +146,8 @@ class FromAndroidAction(Action):
 
 class ToAndroidAction(SubShellAction):
     type: Literal["to-android"]
-    source: SubstitutedStr
-    target: SubstitutedStr
+    source: SubstitutedPath
+    target: SubstitutedPath
     keep_timestamps_and_mode: bool = True
 
     def collect_command(self) -> Iterator[str]:

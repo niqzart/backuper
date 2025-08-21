@@ -5,14 +5,17 @@ from typer import Argument, FileText, Typer
 from yaml import safe_load as safe_load_yaml
 
 from backuper.config import ConfigModel
+from backuper.parameters import ParameterLoader
 from backuper.runner import ActionsModel, run_actions
-from backuper.variables import load_variables
 
-cli = Typer()
+cli = Typer(pretty_exceptions_enable=False)
 
 
 @cli.command()
-def main(config_file: Annotated[FileText, Argument(encoding="utf-8")]) -> None:
+def main(
+    config_file: Annotated[FileText, Argument(encoding="utf-8")],
+    cli_arguments: Annotated[list[str] | None, Argument()] = None,
+) -> None:
     # TODO defaults for filename
 
     loaded_config = safe_load_yaml(config_file)
@@ -22,7 +25,8 @@ def main(config_file: Annotated[FileText, Argument(encoding="utf-8")]) -> None:
     except ValidationError as e:  # noqa: WPS329 WPS440
         raise e  # TODO error handling for parsing
 
-    variables = load_variables(config)
+    parameter_loader = ParameterLoader(config=config, cli_arguments=cli_arguments or [])
+    variables = parameter_loader.load_all()
 
     try:
         actions = ActionsModel.model_validate(config.actions, context=variables)
