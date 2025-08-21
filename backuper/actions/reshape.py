@@ -47,22 +47,26 @@ class ImageReshapeAction(Action):
             if self.is_already_reshaped(image=image):
                 return
 
+            target_filename = self.generate_target_filename(path.name)
             image.save(
-                path.parent / self.generate_target_filename(path.name),
+                path.parent / target_filename,
                 format=RESHAPED_IMAGE_FORMAT,
                 lossless=self.lossless,
                 quality=self.quality,
             )
 
+        print(f"{path}: reshaped to {target_filename}")
+
         if self.delete_original:
             path.unlink()
 
     def reshape_images(self, source_path: Path) -> None:
-        for path in source_path.iterdir():
+        for path in sorted(source_path.iterdir(), key=lambda p: p.name):
             if self.is_filename_skipped(path.name):
                 continue
 
             if self.recursive and path.is_dir():
+                print(f"\n{source_path} reshaping images in directory")
                 self.reshape_images(path)
 
             if not path.is_file():
