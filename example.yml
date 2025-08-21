@@ -11,6 +11,14 @@ parameters:
     index: 0
 
 actions:
+  reshape-screenshots:  # uses pillow to convert images to webp (same quality, but better compression)
+    type: reshape-images
+    source: "./screenshots"
+    replace_extension: true  # i.(png|jpg|...) -> i.webp
+    # normally `.webp` is just appended (so same-name files, like `i.png` & `i.jpg` are kept separate),
+    # but sometimes we know that all files are unique, so it's safe to replace the extension
+    delete_original: true
+
   backup-from-pc:
     type: backup  # uses `robocopy /mir`
     source: "."
