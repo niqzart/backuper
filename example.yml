@@ -6,9 +6,18 @@ parameters:
     value: backup
   zip_password:  # required to be specified in environment
     source: environment
+  server_username:  # required to be specified in environment
+    source: environment
+  server_password:  # required to be specified in environment
+    source: environment
+  server_host:  # required to be specified in environment
+    source: environment
   archive_name:  # required to be specified as the first cli-argument
     source: cli-argument
     index: 0
+  server_path:  # required to be specified as the second cli-argument
+    source: cli-argument
+    index: 1
 
 actions:
   reshape-screenshots:  # uses pillow to convert images to webp (same quality, but better compression)
@@ -34,6 +43,19 @@ actions:
         - "*.tar.gz"
         - "*.7z.*"
     override_permissions: false  # see robocopy's `/b` argument
+
+  backup-from-server:
+    type: scp  # uses `scp -r`
+    source:
+      # you can also authorize via ssh-keys instead of username + password
+      #   this can be configured in you system's `.ssh/config` file
+      username: "${server_username}"
+      password: "${server_password}"
+      host: "${server_host}"  # host is required for remote locations
+      path: "${server_path}/*"  # `*` is used not to get the last folder name in `server_path` added after `/server`
+    target:
+      path: "./${base_backup_folder}/server/"  # local targets should only contain the path
+    bandwidth_limit: 4096  # limits bandwidth (download speed) to 4 Kbit/s (0.5 KiB/S)
 
   backup-from-android:  # uses `adb shell ls` & `adb pull` for robocopy-like backup
     type: from-android
