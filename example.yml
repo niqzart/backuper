@@ -44,15 +44,40 @@ actions:
         - "*.7z.*"
     override_permissions: false  # see robocopy's `/b` argument
 
+  execute-server-command:
+    type: ssh  # uses `ssh`
+    # you can also authorize via ssh-keys instead of username + password
+    #   this can be configured in you system's `.ssh/config` file
+    #   you can also specify the port in the config file instead of here
+    username: "${server_username}"
+    password: "${server_password}"
+    host: "${server_host}"
+    port: 2222  # default is 22, use this field if your server uses a custom ssh port
+    # command will be passed to the remote server
+    #   variables can be used in the command, and they will be substituted (ex. `${sever_path}` above)
+    #   you can use `$$` to escape variable substitution and pass `$` to the remote sever
+    #   using multiline commands is currently not supported, but use can use `&&`, `;` and `|`
+    command: >-
+      echo
+      "$$my_server_variable"
+      >${server_path}/wow.txt
+    # if the remote command exits with a different exit code,
+    #   this step will error out and the execution will stop
+    expected_exit_codes:
+      - 0  # this is the default
+      - 4  # some custom exit code which this script will count as a success
+
   backup-from-server:
     type: scp  # uses `scp -r`
     source:
       # you can also authorize via ssh-keys instead of username + password
       #   this can be configured in you system's `.ssh/config` file
+      #   you can also specify the port in the config file instead of here
       username: "${server_username}"
       password: "${server_password}"
       host: "${server_host}"  # host is required for remote locations
       path: "${server_path}/*"  # `*` is used not to get the last folder name in `server_path` added after `/server`
+      port: 2222  # default is 22, use this field if your server uses a custom ssh port
     target:
       path: "./${base_backup_folder}/server/"  # local targets should only contain the path
     bandwidth_limit: 4096  # limits bandwidth (download speed) to 4 Kbit/s (0.5 KiB/S)

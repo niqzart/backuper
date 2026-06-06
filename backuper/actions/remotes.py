@@ -11,6 +11,7 @@ class SCPLocationData(BaseModel):
     username: SubstitutedStr | None = None
     password: SubstitutedStr | None = None
     host: SubstitutedStr | None = None
+    port: int | None = None
     path: SubstitutedPath
 
     def build_argument(self) -> str:
@@ -21,6 +22,7 @@ class SCPLocationData(BaseModel):
             username=self.username,
             password=self.password,
             host=self.host,
+            port=self.port,
             path=self.path.as_posix(),
         ).unicode_string()
 
@@ -51,3 +53,34 @@ class SCPAction(SubShellAction):
 
     def is_failed(self, return_code: int) -> bool:
         return return_code != 0
+
+
+class SSHAction(SubShellAction):
+    # TODO maybe convert to a python-based solution
+
+    type: Literal["ssh"]
+
+    username: SubstitutedStr | None = None
+    password: SubstitutedStr | None = None
+    host: SubstitutedStr
+    port: int | None = None
+
+    command: SubstitutedStr
+
+    expected_exit_codes: set[int] = {0}
+
+    def collect_command(self) -> Iterator[str]:
+        yield "ssh"
+
+        yield AnyUrl.build(
+            scheme="ssh",
+            username=self.username,
+            password=self.password,
+            host=self.host,
+            port=self.port,
+        ).unicode_string()
+
+        yield self.command
+
+    def is_failed(self, return_code: int) -> bool:
+        return return_code not in self.expected_exit_codes
