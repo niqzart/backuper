@@ -46,28 +46,32 @@ actions:
 
   execute-server-command:
     type: ssh  # uses `ssh`
+    username: "${server_username}"
+    password: "${server_password}"
     # you can also authorize via ssh-keys instead of username + password
     #   this can be configured in you system's `.ssh/config` file
     #   you can also specify the port in the config file instead of here
-    username: "${server_username}"
-    password: "${server_password}"
     host: "${server_host}"
     port: 2222  # default is 22, use this field if your server uses a custom ssh port
-    # command will be passed to the remote server
-    #   variables can be used in the command, and they will be substituted (ex. `${sever_path}` above)
-    #   you can use `$$` to escape variable substitution and pass `$` to the remote sever
-    #   using multiline commands is currently not supported, but use can use `&&`, `;` and `|`
     command: >-
       echo
       "$$my_server_variable"
-      >${server_path}/wow.txt
-    # if the remote command exits with a different exit code,
-    #   this step will error out and the execution will stop
+      >${server_path}/simple/wow.txt
+      &&
+      cat
+      /etc/cool/*.txt
+      >${server_path}/complex/cool.txt
+    # the sting command to be passed to the remote server
+    #   variables can be used in the command, and they will be substituted (ex. `${sever_path}` above)
+    #   you can use `$$` to escape variable substitution and pass `$` to the remote sever
+    #   using multiline commands is currently not supported, but use can use `&&`, `;` and `|`
     expected_exit_codes:
       - 0  # this is the default
       - 4  # some custom exit code which this script will count as a success
+    # if the remote command exits with a different exit code,
+    #   this step will error out and the execution will stop
 
-  backup-from-server:
+  backup-from-server-simple:
     type: scp  # uses `scp -r`
     source:
       # you can also authorize via ssh-keys instead of username + password
@@ -76,11 +80,34 @@ actions:
       username: "${server_username}"
       password: "${server_password}"
       host: "${server_host}"  # host is required for remote locations
-      path: "${server_path}/*"  # `*` is used not to get the last folder name in `server_path` added after `/server`
+      path: "${server_path}/simple/*"  # `*` is used not to get the last folder name in `server_path` added after `/server`
       port: 2222  # default is 22, use this field if your server uses a custom ssh port
     target:
-      path: "./${base_backup_folder}/server/"  # local targets should only contain the path
-    bandwidth_limit: 4096  # limits bandwidth (download speed) to 4 Kbit/s (0.5 KiB/S)
+      path: "./${base_backup_folder}/server/simple/"  # local targets should only contain the path
+    bandwidth_limit: 4096  # limits bandwidth (download speed) to 4096 Kbit/s (512 KB/s)
+
+  backup-from-server-complex:
+    type: rsync-backup  # uses `rsync --recursive --delete --progress`
+    source:
+      username: "${server_username}"
+      password: "${server_password}"
+      # you can also authorize via ssh-keys instead of username + password
+      #   this can be configured in you system's `.ssh/config` file
+      #   you can also specify the port in the config file instead of here
+      host: "${server_host}"  # host is required for remote locations
+      path: "${server_path}/complex/*"  # `*` is used not to get the last folder name in `server_path` added after `/server`
+      port: 2222  # default is 22, use this field if your server uses a custom ssh port
+    target:
+      path: "./${base_backup_folder}/server/complex/"  # local targets should only contain the path
+    preserve_timestamps: true  # default, see rsync's `-t` argument
+    use_transport_compression: true  # default, see rsync's `-z` argument
+    override_partial_files: false  # default, see rsync's `--partial` argument (it's passed if `false`)
+    bandwidth_limit: 512  # limits bandwidth (download speed) to 512 KB/S (4096 Kbit/s)
+    remote_shell: "C:/ProgramData/chocolatey/lib/rsync/tools/bin/ssh.exe"
+    # the ssh executable to use
+    #   example for the one shipped with rsync installed via chocolatey (windows)
+    #   some other "popular" options: `/usr/bin/ssh`, `path_to_cygwin/bin/ssh.exe`
+    #   by default will use `ssh` (or wherever this alias leads to on your system)
 
   backup-from-android:  # uses `adb shell ls` & `adb pull` for robocopy-like backup
     type: from-android
