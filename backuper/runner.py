@@ -7,6 +7,7 @@ from backuper.actions.abstract import ActionError
 from backuper.actions.android import FromAndroidAction, ToAndroidAction
 from backuper.actions.backup import BackupAction
 from backuper.actions.compress import CompressAction
+from backuper.actions.remotes import RSyncBackupAction, SSHAction
 from backuper.actions.reshape import ImageReshapeAction
 from backuper.actions.split import SplitAction
 
@@ -16,7 +17,9 @@ AnyAction = Annotated[
     | SplitAction
     | FromAndroidAction
     | ToAndroidAction
-    | ImageReshapeAction,
+    | ImageReshapeAction
+    | SSHAction
+    | RSyncBackupAction,
     Field(discriminator="type"),
 ]
 ActionsModel = RootModel[OrderedDict[str, AnyAction]]
